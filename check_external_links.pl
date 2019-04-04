@@ -2,8 +2,40 @@
 
 use LWP::UserAgent;
 use HTTP::Request::Common;
+use strict;
+use File::Find qw(finddepth);
 # Disable verification of SSL host names. Required for checking URLs at https:// addresses
 $ENV{'PERL_LWP_SSL_VERIFY_HOSTNAME'} = 0;
+
+my %results = ();
+ my @files;
+ finddepth(sub {
+      return if($_ eq '.' || $_ eq '..');
+		my $omg = $File::Find::name;
+		if ($omg =~ m/\.html$/) {
+      	push @files, $File::Find::name;
+		}
+ }, '/Users/mlautman/Documents/docs/_build/html');
+
+$/ = undef;
+foreach (@files) {
+	#print "$_\n";
+	open (my $html, "<$_") or die('Cannot open a file');
+	my $hugefile = <$html>;
+	my @urls = $hugefile =~ m/https:/g;
+	if (@urls) {
+		$results{$_} = @urls;
+	}
+	close ($html);
+}
+foreach (keys %results) {
+	print "$_\n";
+	foreach ($results{$_}) {
+		print "  $_\n";
+	}
+}
+exit;
+
 my $ua = LWP::UserAgent->new;
 
 #my $response = $ua->head("http://localhost:82/index.htmx");
