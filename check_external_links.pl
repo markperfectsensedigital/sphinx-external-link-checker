@@ -1,4 +1,30 @@
 #!/usr/bin/perl
+=pod
+According to https://www.ietf.org/rfc/rfc2396.txt
+
+A URI contains characters
+
+      alpha    = lowalpha | upalpha
+
+      lowalpha = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" |
+                 "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" |
+                 "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
+
+      upalpha  = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" |
+                 "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" |
+                 "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z"
+
+      digit    = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" |
+                 "8" | "9"
+
+      alphanum = alpha | digit
+
+mark        = "-" | "_" | "." | "!" | "~" | "*" | "'" | "(" | ")"
+
+unreserved = alphanu | mark
+
+In Perl, this amounts to [\d\w-!~*'()]
+=cut
 
 use LWP::UserAgent;
 use HTTP::Request::Common;
@@ -23,7 +49,8 @@ foreach (@files) {
 	#print "$_\n";
 	open (my $html, "<$_") or die('Cannot open a file');
 	my $hugefile = <$html>;
-	my @localurls = $hugefile =~ m/http[s]?:\/\/.*?\.html/g;
+	my @localurls = $hugefile =~ m/http[s]?:\/\/.*?\.html#[\d\w-!~*'()]*/g;
+
 	foreach my $bango (@localurls) {
 		print "Checking for $bango inside @urls\n";
 		my @newones = grep(/^$bango$/,@urls);
@@ -31,6 +58,7 @@ foreach (@files) {
 		if (!@newones) {
 			print ("I found new ones: $bango\n");
 			push (@urls,$bango);
+	exit;
 		}
 	}
 	close ($html);
