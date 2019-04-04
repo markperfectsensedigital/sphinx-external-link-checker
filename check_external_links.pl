@@ -24,7 +24,14 @@ mark        = "-" | "_" | "." | "!" | "~" | "*" | "'" | "(" | ")"
 unreserved = alphanu | mark
 
 In Perl, this amounts to [\d\w-!~*'()]
+
+my @test = ('https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800','https://fonts.googleapis.com/icon?family=Material+Icons');
+my @omg = grep (/^https:\/\/fonts.googleapis.com\/css\?family=Open\+Sans:300,400,600,700,800$/,@test);
+print "The result is @omg\n";
+exit;
 =cut
+
+
 
 use LWP::UserAgent;
 use HTTP::Request::Common;
@@ -49,22 +56,29 @@ foreach (@files) {
 	#print "$_\n";
 	open (my $html, "<$_") or die('Cannot open a file');
 	my $hugefile = <$html>;
-	my @localurls = $hugefile =~ m/http[s]?:\/\/.*?\.html#[\d\w-!~*'()]*/g;
+	# Match any string surrounded by href=".*" that starst with a word char (avoids local
+	# files starting with ..)
+	my @hrefs = $hugefile =~ m/href=\"\w*:\/\/.*?"/g;
+	# Isolate the URL inside href=".*"
+	s/href="(.*)"/$1/ for  @hrefs;
 
-	foreach my $bango (@localurls) {
-		print "Checking for $bango inside @urls\n";
+	foreach my $bango (@hrefs) {
+		#print "The value for hrefs is @hrefs\n";
+		#exit;
+		#print "Checking for $bango inside @urls\n";
 		my @newones = grep(/^$bango$/,@urls);
-		print "The value of newones is @newones\n";
+		#print "The value of newones is @newones\n";
 		if (!@newones) {
-			print ("I found new ones: $bango\n");
+#			print ("I found new ones: $bango\n");
 			push (@urls,$bango);
-	exit;
 		}
 	}
 	close ($html);
 }
 print "When it is all over, the URLs are\n";
-print "@urls\n";
+foreach (@urls) {
+	print "$_\n";
+}
 exit;
 
 my $ua = LWP::UserAgent->new;
