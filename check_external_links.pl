@@ -48,6 +48,18 @@ finddepth(sub {
 my $ua = LWP::UserAgent->new;
 $ua->agent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36');
 
+=pod
+# The following lines test a single URL.
+my $test_url = 'http://www.apimages.com/ap-images-content-api';
+my $response = $ua->get($test_url);
+print "URL: $test_url\n";
+print "Response code: $response->{'_rc'}\n";
+print "Message: $response->{'_msg'}\n";
+exit;
+=cut
+
+
+
 # Required for slurping
 $/ = undef;
 
