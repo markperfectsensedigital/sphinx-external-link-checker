@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-die "Usage: $0 <directory containing _build/html/>\n" if @ARGV < 1;
+die "\nUsage: $0 <directory containing _build/html/>\n\n" if @ARGV < 1;
 
 my $user_directory = $ARGV[0];
 my $build_directory = $ARGV[0] . '/_build/html/';
@@ -87,10 +87,14 @@ foreach (keys %newurls) {
 	};
 }
 
+
 # Print results.
-print "URL\tResponse Code\tMessage\n";
+open (my $outfile,'>/tmp/url_list.csv') || die "Cannot open output file\n";
+print $outfile "URL\tResponse Code\tMessage\n";
 foreach (sort keys %newurls) {
-	print "$_\t$newurls{$_}{'rc'}\t$newurls{$_}{'msg'}\n"; 
+	print $outfile "$_\t$newurls{$_}{'rc'}\t$newurls{$_}{'msg'}\n"; 
 	
 }
 
+close $outfile;
+print "\nAll done! Results in /tmp/url_list.csv\n\n";
