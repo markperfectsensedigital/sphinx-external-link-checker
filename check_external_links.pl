@@ -1,5 +1,22 @@
 #!/usr/bin/perl
 
+die "Usage: $0 <directory containing _build/html/>\n" if @ARGV < 1;
+
+my $user_directory = $ARGV[0];
+my $build_directory = $ARGV[0] . '/_build/html/';
+# Remove trailing slashes.
+$build_directory =~ s/\/\//\//gc;
+
+print "\nChecking $build_directory...";
+
+if (-e $build_directory and -d $build_directory) {
+	print "exists!\n\n";
+} else {
+	print "\n\nThe directory $user_directory does not exist,\n";
+	print "or does not contain the subdirectories _build/html. Try another directory?\n\n.";
+	exit;
+}
+
 use LWP::UserAgent;
 use HTTP::Request::Common;
 use strict;
