@@ -90,7 +90,7 @@ foreach (keys %newurls) {
 # Print results.
 print "URL\tResponse Code\tMessage\n";
 foreach (sort keys %newurls) {
-	print "$_\t" . $newurls{$_}{'rc'} . "\t" . $newurls{$_}{'msg'} . "\n"; 
+	print "$_\t$newurls{$_}{'rc'}\t$newurls{$_}{'msg'}\n"; 
 	
 }
 
